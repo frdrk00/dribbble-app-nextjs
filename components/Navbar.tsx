@@ -7,7 +7,7 @@ import AuthProviders from './AuthProviders'
 interface NavbarProps {}
 
 const Navbar: FC<NavbarProps> = ({}) => {
-  const session = {}
+  const session = null
 
   return (
     <nav className="flexBetween navbar">
