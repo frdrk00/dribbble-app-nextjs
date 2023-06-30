@@ -7,6 +7,8 @@ import FormField from './FormField'
 import { categoryFilters } from '@/constants'
 import CustomMenu from './CustomMenu'
 import Button from './Button'
+import { createNewProject, fetchToken } from '@/lib/actions'
+import { useRouter } from 'next/navigation'
 
 interface ProjectFormProps {
   type: string
@@ -14,7 +16,28 @@ interface ProjectFormProps {
 }
 
 const ProjectForm: FC<ProjectFormProps> = ({ type, session }) => {
-  const handleFormSubmit = (e: React.FormEvent) => {}
+  const router = useRouter()
+
+  const [submitting, setSubmitting] = useState<boolean>(false)
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    setIsSubmitting(true)
+
+    const { token } = await fetchToken()
+
+    try {
+      if (type === 'create') {
+        await createNewProject(form, session?.user?.id, token)
+
+        router.push('/')
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
   const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
 
@@ -55,7 +78,7 @@ const ProjectForm: FC<ProjectFormProps> = ({ type, session }) => {
   return (
     <form onSubmit={handleFormSubmit} className="flexStart form">
       <div className="flexStart form_image-container">
-        <label htmlForm="poster" className="flexCenter form_image-label">
+        <label htmlFor="poster" className="flexCenter form_image-label">
           {!form.image && 'Choose a poster for your project'}
         </label>
         <input
@@ -116,13 +139,13 @@ const ProjectForm: FC<ProjectFormProps> = ({ type, session }) => {
       <div className="flexStart w-full">
         <Button
           title={
-            isSubmitting
+            submitting
               ? `${type === 'create' ? 'Creating' : 'Editing'}`
               : `${type === 'create' ? 'Create' : 'Edit'}`
           }
           type="submit"
-          leftIcon={isSubmitting ? '' : '/plus.svg'}
-          isSubmitting={isSubmitting}
+          leftIcon={submitting ? '' : '/plus.svg'}
+          submitting={submitting}
         />
       </div>
     </form>
