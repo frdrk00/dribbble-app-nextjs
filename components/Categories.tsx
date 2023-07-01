@@ -30,7 +30,9 @@ const Categories: FC<CategoriesProps> = ({}) => {
                 ? 'bg-light-white-300 font-medium'
                 : 'font-normal'
             } px-4 py-3 rounded-lg capitalize whitespace-nowrap`}
-          ></button>
+          >
+            {filter}
+          </button>
         ))}
       </ul>
     </div>
