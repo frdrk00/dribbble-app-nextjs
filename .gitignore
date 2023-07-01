@@ -11,6 +11,7 @@
 # next.js
 /.next/
 /.grafbase/
+/grafbase/*.env/
 /out/
 
 # production
