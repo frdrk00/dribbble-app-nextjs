@@ -10,6 +10,7 @@
 
 # next.js
 /.next/
+/.grafbase/
 /out/
 
 # production
