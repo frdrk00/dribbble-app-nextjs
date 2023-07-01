@@ -9,32 +9,33 @@ import FormField from './FormField'
 import Button from './Button'
 
 import { categoryFilters } from '@/constants'
-import { FormState, SessionInterface } from '@/common.types'
-import { createNewProject, fetchToken } from '@/lib/actions'
+import { FormState, ProjectInterface, SessionInterface } from '@/common.types'
+import { createNewProject, fetchToken, updateProject } from '@/lib/actions'
 
 interface ProjectFormProps {
   type: string
   session: SessionInterface
+  project?: ProjectInterface
 }
 
-const ProjectForm: FC<ProjectFormProps> = ({ type, session }) => {
+const ProjectForm: FC<ProjectFormProps> = ({ type, session, project }) => {
   const router = useRouter()
   const [submitting, setSubmitting] = useState<boolean>(false)
 
-  const [form, setForm] = useState({
-    image: '',
-    title: '',
-    description: '',
-    liveSiteUrl: '',
-    githubUrl: '',
-    category: '',
+  const [form, setForm] = useState<FormState>({
+    title: project?.title || '',
+    description: project?.description || '',
+    image: project?.image || '',
+    liveSiteUrl: project?.liveSiteUrl || '',
+    githubUrl: project?.githubUrl || '',
+    category: project?.category || '',
   })
 
   const handleStateChange = (fieldName: keyof FormState, value: string) => {
     setForm((prevState) => ({ ...prevState, [fieldName]: value }))
   }
 
- const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault()
 
     const file = e.target.files?.[0]
@@ -66,6 +67,12 @@ const ProjectForm: FC<ProjectFormProps> = ({ type, session }) => {
     try {
       if (type === 'create') {
         await createNewProject(form, session?.user?.id, token)
+
+        router.push('/')
+      }
+
+      if (type === 'edit') {
+        await updateProject(form, project?.id as string, token)
 
         router.push('/')
       }
