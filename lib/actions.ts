@@ -97,11 +97,11 @@ export const createNewProject = async (
 
 export const fetchAllProjects = async (
   category?: string,
-  endcursor?: string
+  endCursor?: string
 ) => {
   client.setHeader('x-api-key', apiKey)
 
-  return makeGraphQLRequest(projectsQuery, { category, endcursor })
+  return makeGraphQLRequest(projectsQuery, { category, endCursor })
 }
 
 export const getProjectDetails = (id: string) => {
@@ -119,30 +119,34 @@ export const deleteProjects = (id: string, token: string) => {
   return makeGraphQLRequest(deleteProjectMutation, { id })
 }
 
-export const updateProject = async (form: ProjectForm, projectId: string, token: string) => {
+export const updateProject = async (
+  form: ProjectForm,
+  projectId: string,
+  token: string
+) => {
   function isBase64DataURL(value: string) {
-    const base64Regex = /^data:image\/[a-z]+;base64,/;
-    return base64Regex.test(value);
+    const base64Regex = /^data:image\/[a-z]+;base64,/
+    return base64Regex.test(value)
   }
 
-  let updatedForm = { ...form };
+  let updatedForm = { ...form }
 
-  const isUploadingNewImage = isBase64DataURL(form.image);
+  const isUploadingNewImage = isBase64DataURL(form.image)
 
   if (isUploadingNewImage) {
-    const imageUrl = await uploadImage(form.image);
+    const imageUrl = await uploadImage(form.image)
 
     if (imageUrl.url) {
-      updatedForm = { ...updatedForm, image: imageUrl.url };
+      updatedForm = { ...updatedForm, image: imageUrl.url }
     }
   }
 
-  client.setHeader("Authorization", `Bearer ${token}`);
+  client.setHeader('Authorization', `Bearer ${token}`)
 
   const variables = {
     id: projectId,
     input: updatedForm,
-  };
+  }
 
-  return makeGraphQLRequest(updateProjectMutation, variables);
-};
+  return makeGraphQLRequest(updateProjectMutation, variables)
+}
